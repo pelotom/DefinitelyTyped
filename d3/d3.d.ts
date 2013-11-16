@@ -120,7 +120,7 @@ declare module D3 {
         /**
         * Compute the median of an array of numbers (the 0.5-quantile).
         *
-        * @param arr Array to search
+        * @param arr Array to searchD
         * @param map Accsessor function
         */
         median<T>(arr: T[], map?: (v: T) => number): number;
@@ -714,6 +714,7 @@ declare module D3 {
         data: {
             (values: (data: any, index?: number) => any[], key?: (data: any, index?: number) => string): UpdateSelection;
             (values: any[], key?: (data: any, index?: number) => string): UpdateSelection;
+            (): any[];
         };
 
         datum: {
