@@ -973,12 +973,12 @@ declare module D3 {
                 * Constructs a new time scale with the default domain and range;
                 * the ticks and tick format are configured for local time.
                 */
-                (): Scale.TimeScale;
+                (): Scale.TimeScale<any>;
                 /**
                 * Constructs a new time scale with the default domain and range;
                 * the ticks and tick format are configured for UTC time.
                 */
-                utc(): Scale.TimeScale;
+                utc(): Scale.TimeScale<any>;
             };
         }
 
@@ -1516,7 +1516,7 @@ declare module D3 {
             /**
             * Create a new axis generator
             */
-            axis(): Axis;
+            axis(): Axis<any>;
             /**
             * Create a new arc generator
             */
@@ -1538,7 +1538,7 @@ declare module D3 {
             /**
             * Create a new brush generator
             */
-            brush(): Brush;
+            brush(): Brush<any, any>;
             /**
             * Create a new chord generator
             */
@@ -1561,7 +1561,7 @@ declare module D3 {
             size: (number:number) => Symbol;
         }
 
-        export interface Brush {
+        export interface Brush<X, Y> {
             /**
             * Draws or redraws this brush into the specified selection of elements
             */
@@ -1573,13 +1573,13 @@ declare module D3 {
                 /**
                 * Gets  the x-scale associated with the brush
                 */
-                (): D3.Scale.Scale;
+                (): X;
                 /**
                 * Sets the x-scale associated with the brush
                 *
                 * @param accessor The new Scale
                 */
-                (scale: D3.Scale.Scale): Brush;
+                <X extends D3.Scale.Scale<any, any>>(scale: X): Brush<X, Y>;
             };
             /**
             * Gets or sets the x-scale associated with the brush
@@ -1588,13 +1588,13 @@ declare module D3 {
                 /**
                 * Gets  the x-scale associated with the brush
                 */
-                (): D3.Scale.Scale;
+                (): Y;
                 /**
                 * Sets the x-scale associated with the brush
                 *
                 * @param accessor The new Scale
                 */
-                (scale: D3.Scale.Scale): Brush;
+                <Y extends D3.Scale.Scale<any, any>>(scale: Y): Brush<X, Y>;
             };
             /**
             * Gets or sets the current brush extent
@@ -1607,12 +1607,12 @@ declare module D3 {
                 /**
                 * Sets the current brush extent
                 */
-                (values: any[]): Brush;
+                (values: any[]): Brush<X, Y>;
             };
             /**
             * Clears the extent, making the brush extent empty.
             */
-            clear(): Brush;
+            clear(): Brush<X, Y>;
             /**
             * Returns true if and only if the brush extent is empty
             */
@@ -1628,40 +1628,40 @@ declare module D3 {
                 /**
                 * Sets the listener for the specified event type
                 */
-                (type: string, listener: (data: any, index: number) => any, capture?: boolean): Brush;
+                (type: string, listener: (data: any, index: number) => any, capture?: boolean): Brush<X, Y>;
             };
         }
 
-        export interface Axis {
+        export interface Axis<S> {
             (selection: Selection): void;
             scale: {
-                (): any;
-                (scale: any): Axis;
+                (): S;
+                <S extends D3.Scale.Scale<any, any>>(scale: S): Axis<S>;
             };
 
             orient: {
                 (): string;
-                (orientation: string): Axis;
+                (orientation: string): Axis<S>;
             };
 
             ticks: {
                 (): any[];
-                (...arguments: any[]): Axis;
+                (...arguments: any[]): Axis<S>;
             };
 
             tickPadding: {
                 (): number;
-                (padding: number): Axis;
+                (padding: number): Axis<S>;
             };
 
             tickValues: {
                 (): any[];
-                (values: any[]): Axis;
+                (values: any[]): Axis<S>;
             };
 
-            tickSubdivide(count: number): Axis;
-            tickSize(major?: number, minor?: number, end?: number): Axis;
-            tickFormat(formatter: (value: any) => string): Axis;
+            tickSubdivide(count: number): Axis<S>;
+            tickSize(major?: number, minor?: number, end?: number): Axis<S>;
+            tickFormat(formatter: (value: any) => string): Axis<S>;
         }
 
         export interface Arc {
@@ -2381,77 +2381,80 @@ declare module D3 {
             /**
             * Construct a linear quantitative scale.
             */
-            linear(): LinearScale;
+            linear(): QuantitativeScale<any>;
             /*
             * Construct an ordinal scale.
             */
-            ordinal(): OrdinalScale;
+            ordinal(): OrdinalScale<any, any>;
             /**
             * Construct a linear quantitative scale with a discrete output range.
             */
-            quantize(): QuantizeScale;
+            quantize(): QuantizeScale<any>;
             /*
             * Construct an ordinal scale with ten categorical colors.
             */
-            category10(): OrdinalScale;
+            category10(): OrdinalScale<any, string>;
             /*
             * Construct an ordinal scale with twenty categorical colors
             */
-            category20(): OrdinalScale;
+            category20(): OrdinalScale<any, string>;
             /*
             * Construct an ordinal scale with twenty categorical colors
             */
-            category20b(): OrdinalScale;
+            category20b(): OrdinalScale<any, string>;
             /*
             * Construct an ordinal scale with twenty categorical colors
             */
-            category20c(): OrdinalScale;
+            category20c(): OrdinalScale<any, string>;
             /*
             * Construct a linear identity scale.
             */
-            identity(): IdentityScale;
+            identity(): QuantitativeScale<any>;
             /*
             * Construct a quantitative scale with an logarithmic transform.
             */
-            log(): LogScale;
+            log(): QuantitativeScale<any>;
             /*
             * Construct a quantitative scale with an exponential transform.
             */
-            pow(): PowScale;
+            pow(): QuantitativeScale<any>;
             /*
             * Construct a quantitative scale mapping to quantiles.
             */
-            quantile(): QuantileScale;
+            quantile(): QuantileScale<any>;
             /*
             * Construct a quantitative scale with a square root transform.
             */
-            sqrt(): SqrtScale;
+            sqrt(): QuantitativeScale<any>;
             /*
             * Construct a threshold scale with a discrete output range.
             */
-            threshold(): ThresholdScale;
+            threshold(): ThresholdScale<any, any>;
         }
 
-        export interface Scale {
-            (value: any): any;
+        export interface Scale<D, R> {
+            (value: D): R;
             domain: {
-                (values: any[]): Scale;
-                (): any[];
+                (values: D[]): Scale<D, R>;
+                (): D[];
             };
             range: {
-                (values: any[]): Scale;
-                (): any[];
+                <R>(values: R[]): Scale<D, R>;
+                (): R[];
             };
-            copy(): Scale;
+            copy(): Scale<D, R>;
         }
 
-        export interface QuantitiveScale extends Scale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
+        export interface QuantitativeScale<R> extends Scale<number, R> {
+            domain: {
+                (values: number[]): QuantitativeScale<R>;
+                (): number[];
+            };
+            range: {
+                <R>(values: R[]): QuantitativeScale<R>;
+                (): R[];
+            };
+            copy(): QuantitativeScale<R>;
             /**
             * Get the domain value corresponding to a given range value.
             *
@@ -2459,234 +2462,144 @@ declare module D3 {
             */
             invert(value: number): number;
             /**
-            * Get or set the scale's input domain.
-            */
-            domain: {
-                /**
-                * Set the scale's input domain.
-                *
-                * @param value The input domain
-                */
-                (values: any[]): QuantitiveScale;
-                /**
-                * Get the scale's input domain.
-                */
-                (): any[];
-            };
-            /**
-            * get or set the scale's output range.
-            */
-            range: {
-                /**
-                * Set the scale's output range.
-                *
-                * @param value The output range.
-                */
-                (values: any[]): QuantitiveScale;
-                /**
-                * Get the scale's output range.
-                */
-                (): any[];
-            };
-            /**
             * Set the scale's output range, and enable rounding.
             *
             * @param value The output range.
             */
-            rangeRound: (values: any[]) => QuantitiveScale;
+            rangeRound: (values: R[]) => QuantitativeScale<R>;
             /**
             * get or set the scale's output interpolator.
             */
             interpolate: {
                 (): D3.Transition.Interpolate;
-                (factory: D3.Transition.Interpolate): QuantitiveScale;
+                (factory: D3.Transition.Interpolate): QuantitativeScale<R>;
             };
             /**
             * enable or disable clamping of the output range.
             *
             * @param clamp Enable or disable
             */
-            clamp(clamp: boolean): QuantitiveScale;
+            clamp(clamp: boolean): QuantitativeScale<R>;
             /**
             * extend the scale domain to nice round numbers.
             * 
             * @param count Optional number of ticks to exactly fit the domain
             */
-            nice(count?: number): QuantitiveScale;
+            nice(count?: number): QuantitativeScale<R>;
             /**
             * get representative values from the input domain.
             *
             * @param count Aproximate representative values to return.
             */
-            ticks(count: number): any[];
+            ticks(count: number): number[];
             /**
             * get a formatter for displaying tick values
             *
             * @param count Aproximate representative values to return
             */
             tickFormat(count: number): (n: number) => string;
-            /**
-            * create a new scale from an existing scale..
-            */
-            copy(): QuantitiveScale;
         }
 
-        export interface LinearScale extends QuantitiveScale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
-        }
-
-        export interface IdentityScale extends QuantitiveScale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
-        }
-
-        export interface SqrtScale extends QuantitiveScale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
-        }
-
-        export interface PowScale extends QuantitiveScale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
-        }
-
-        export interface LogScale extends QuantitiveScale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: number): number;
-        }
-
-        export interface OrdinalScale extends Scale {
-            /**
-            * Get the range value corresponding to a given domain value.
-            *
-            * @param value Domain Value
-            */
-            (value: any): any;
-            /**
-            * Get or set the scale's input domain.
-            */
+        export interface OrdinalScale<D, R> extends Scale<D, R> {
             domain: {
-                /**
-                * Set the scale's input domain.
-                *
-                * @param value The input domain
-                */
-                (values: any[]): OrdinalScale;
-                /**
-                * Get the scale's input domain.
-                */
-                (): any[];
+                <D>(values: D[]): OrdinalScale<D, R>;
+                (): D[];
             };
-            /**
-            * get or set the scale's output range.
-            */
             range: {
-                /**
-                * Set the scale's output range.
-                *
-                * @param value The output range.
-                */
-                (values: any[]): OrdinalScale;
-                /**
-                * Get the scale's output range.
-                */
-                (): any[];
+                <R>(values: R[]): OrdinalScale<D, R>;
+                (): R[];
             };
-            rangePoints(interval: any[], padding?: number): OrdinalScale;
-            rangeBands(interval: any[], padding?: number, outerPadding?: number): OrdinalScale;
-            rangeRoundBands(interval: any[], padding?: number, outerPadding?: number): OrdinalScale;
+            copy(): OrdinalScale<D, R>;
+            rangePoints(interval: any[], padding?: number): OrdinalScale<D, R>;
+            rangeBands(interval: any[], padding?: number, outerPadding?: number): OrdinalScale<D, R>;
+            rangeRoundBands(interval: any[], padding?: number, outerPadding?: number): OrdinalScale<D, R>;
             rangeBand(): number;
             rangeExtent(): any[];
-            /**
-            * create a new scale from an existing scale..
-            */
-            copy(): OrdinalScale;
         }
 
-        export interface QuantizeScale extends Scale {
-            (value: any): any;
+        export interface QuantizeScale<R> extends Scale<number, R> {
             domain: {
-                (values: number[]): QuantizeScale;
-                (): any[];
+                (values: number[]): QuantizeScale<R>;
+                (): number[];
             };
             range: {
-                (values: any[]): QuantizeScale;
-                (): any[];
+                <R>(values: R[]): QuantizeScale<R>;
+                (): R[];
             };
-            copy(): QuantizeScale;
+            copy(): QuantizeScale<R>;
+            // TODO add missing quantize scale stuff
         }
 
-        export interface ThresholdScale extends Scale {
-            (value: any): any;
+        export interface ThresholdScale<D, R> extends Scale<D, R> {
             domain: {
-                (values: number[]): ThresholdScale;
-                (): any[];
+                <D>(values: D[]): ThresholdScale<D, R>;
+                (): D[];
             };
             range: {
-                (values: any[]): ThresholdScale;
-                (): any[];
+                <R>(values: R[]): ThresholdScale<D, R>;
+                (): R[];
             };
-            copy(): ThresholdScale;
+            copy(): ThresholdScale<D, R>;
+            // TODO add missing threshold scale stuff
         }
 
-        export interface QuantileScale extends Scale {
-            (value: any): any;
+        export interface QuantileScale<R> extends Scale<number, R> {
             domain: {
-                (values: number[]): QuantileScale;
-                (): any[];
+                (values: number[]): QuantileScale<R>;
+                (): number[];
             };
             range: {
-                (values: any[]): QuantileScale;
-                (): any[];
+                <R>(values: R[]): QuantileScale<R>;
+                (): R[];
             };
+            copy(): QuantileScale<R>;
             quantiles(): any[];
-            copy(): QuantileScale;
+            // TODO add missing quantile scale stuff
         }
 
-        export interface TimeScale extends Scale {
-            (value: Date): number;
-            invert(value: number): Date;
+        export interface TimeScale<R> extends Scale<Date, R> {
             domain: {
-                (values: any[]): TimeScale;
-                (): any[];
+                (values: Date[]): TimeScale<R>;
+                (): Date[];
             };
             range: {
-                (values: any[]): TimeScale;
-                (): any[];
+                <R>(values: R[]): TimeScale<R>;
+                (): R[];
             };
-            rangeRound: (values: any[]) => TimeScale;
+            copy(): TimeScale<R>;
+            invert(value: number): Date;
+            /**
+            * Extends the domain so that it starts and ends on nice round values
+            * as determined by the specified time interval and optional step count.
+            * @param interval 
+            */
+            nice(interval: number, step: number): TimeScale<R>;
+            /**
+            * Extends the domain so that it starts and ends on nice round values
+            * as determined by the specified time interval and optional step count.
+            * 
+            * @param count Number of ticks to exactly fit the domain
+            */
+            nice(count?: number): TimeScale<R>;
+            rangeRound: (values: number[]) => TimeScale<R>;
             interpolate: {
                 (): D3.Transition.Interpolate;
-                (factory: D3.Transition.InterpolateFactory): TimeScale;
+                (factory: D3.Transition.InterpolateFactory): TimeScale<R>;
             };
-            clamp(clamp: boolean): TimeScale;
+            /**
+            * Returns whether or not the scale currently clamps values to within
+            * the output range.
+            */
+            clamp(): boolean;
+            /**
+            * Enables or disables clamping of values to the output range.
+            */
+            clamp(clamp: boolean): TimeScale<R>;
             ticks: {
                 (count: number): any[];
                 (range: Range, count: number): any[];
             };
             tickFormat(count: number): (n: number) => string;
-            copy(): TimeScale;
         }
     }
 
@@ -2700,10 +2613,10 @@ declare module D3 {
             /**
             * Constructs a new zoom behaviour
             */
-            zoom(): Zoom;
+            zoom(): Zoom<any, any>;
         }
 
-        export interface Zoom {
+        export interface Zoom<X, Y> {
             /**
             * Applies the zoom behavior to the specified selection,
             * registering the necessary event listeners to support
@@ -2717,7 +2630,7 @@ declare module D3 {
             * @param type Enent name to attach the listener to
             * @param listener Function to attach to event
             */
-            on: (type: string, listener: (data: any, index?: number) => any) => Zoom;
+            on: (type: string, listener: (data: any, index?: number) => any) => Zoom<X, Y>;
 
             /**
             * Gets or set the current zoom scale
@@ -2732,7 +2645,7 @@ declare module D3 {
                 *
                 * @param origin Zoom scale
                 */
-                (scale: number): Zoom;
+                (scale: number): Zoom<X, Y>;
             };
 
             /**
@@ -2748,7 +2661,7 @@ declare module D3 {
                 *
                 * @param translate Tranlation vector
                 */
-                (translate: number[]): Zoom;
+                (translate: number[]): Zoom<X, Y>;
             };
 
             /**
@@ -2764,7 +2677,7 @@ declare module D3 {
                 *
                 * @param extent Allowed zoom range
                 */
-                (extent: number[]): Zoom;
+                (extent: number[]): Zoom<X, Y>;
             };
 
             /**
@@ -2774,13 +2687,13 @@ declare module D3 {
                 /**
                 * Get the X-Scale
                 */
-                (): D3.Scale.Scale;
+                (): X;
                 /**
                 * Set the X-Scale to be adjusted
                 *
                 * @param x The X Scale
                 */
-                (x: D3.Scale.Scale): Zoom;
+                <X extends D3.Scale.Scale<any, any>>(x: X): Zoom<X, Y>;
 
             };
 
@@ -2791,13 +2704,14 @@ declare module D3 {
                 /**
                 * Get the Y-Scale
                 */
-                (): D3.Scale.Scale;
+                (): Y;
                 /**
                 * Set the Y-Scale to be adjusted
                 *
                 * @param y The Y Scale
                 */
-                (y: D3.Scale.Scale): Zoom;
+                <Y extends D3.Scale.Scale<any, any>>(y: Y): Zoom<X, Y>;
+
             };
         }
 

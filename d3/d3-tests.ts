@@ -146,6 +146,16 @@ function groupedBarChart() {
     });
 }
 
+interface StackedDatum {
+    ages: {
+        name: string;
+        y0: number;
+        y1: number;
+    }[];
+    total: number;
+    State: string;
+}
+
 //Example from http://bl.ocks.org/3886208
 function stackedBarChart() {
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
@@ -176,7 +186,7 @@ function stackedBarChart() {
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("data.csv", function (error, data) {
+    d3.csv("data.csv", function (error, data: StackedDatum[]) {
         color.domain(d3.keys(data[0]).filter(function (key) { return key !== "State"; }));
 
         data.forEach(function (d) {
@@ -188,6 +198,7 @@ function stackedBarChart() {
         data.sort(function (a, b) { return b.total - a.total; });
 
         x.domain(data.map(function (d) { return d.State; }));
+        var n: number = d3.max(data, function (d) { return d.total; });
         y.domain([0, d3.max(data, function (d) { return d.total; })]);
 
         svg.append("g")
@@ -324,6 +335,11 @@ function normalizedBarChart() {
     });
 }
 
+interface SortableDatum {
+    letter: string;
+    frequency: number;
+}
+
 // example from http://bl.ocks.org/3885705
 function sortablebarChart() {
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
@@ -353,7 +369,7 @@ function sortablebarChart() {
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.tsv("data.tsv", function (error, data) {
+    d3.tsv("data.tsv", function (error, data: SortableDatum[]) {
 
         data.forEach(function (d) {
             d.frequency = +d.frequency;
@@ -528,8 +544,8 @@ function lineChart() {
             d.close = +d.close;
         });
 
-        x.domain(d3.extent(data, function (d) { return d.date; }));
-        y.domain(d3.extent(data, function (d) { return d.close; }));
+        x.domain(d3.extent(data, function (d) { return <Date>d.date; }));
+        y.domain(d3.extent(data, function (d) { return <number>d.close; }));
 
         svg.append("g")
             .attr("class", "x axis")
@@ -593,8 +609,8 @@ function bivariateAreaChart() {
             d.high = +d.high;
         });
 
-        x.domain(d3.extent(data, function (d) { return d.date; }));
-        y.domain([d3.min(data, function (d) { return d.low; }), d3.max(data, function (d) { return d.high; })]);
+        x.domain(d3.extent(data, function (d) { return <Date>d.date; }));
+        y.domain([d3.min(data, function (d) { return <number>d.low; }), d3.max(data, function (d) { return <number>d.high; })]);
 
         svg.append("path")
             .datum(data)
@@ -1782,7 +1798,7 @@ function irisParallel() {
             flowers.forEach(function (p) { p[d] = +p[d]; } );
 
             y[d] = d3.scale.linear()
-                .domain(d3.extent(flowers, function (p) { return p[d]; } ))
+                .domain(d3.extent(flowers, function (p) { return <number>p[d]; } ))
                 .range([h, 0]);
 
             y[d].brush = d3.svg.brush()
@@ -2473,4 +2489,24 @@ function extentTest() {
     d3.extent(["20", 3], (d) => { return d; });
     d3.extent([3, "20"], (d) => { return d; });
     d3.extent(["3", 20], (d) => { return d; });
+}
+
+// Test scales
+function scalesTest() {
+    var color: string,
+        num: number,
+        date: Date;
+
+    var colorInterpolator = d3.scale.linear().range(['red', 'green']);
+    color = colorInterpolator(0.5);
+    num = colorInterpolator.domain()[0];
+
+    var timeScale = d3.time.scale().domain([new Date(), new Date()]).range(['red', 'green']);
+    color = timeScale(new Date());
+    date = timeScale.domain()[0];
+
+    var zoom = d3.behavior.zoom().x(colorInterpolator).y(timeScale);
+    // pass scale type through a zoom and make sure it arrives safely on the other side
+    var x: D3.Scale.QuantitativeScale<any> = zoom.x();
+    var y: D3.Scale.TimeScale<any> = zoom.y();
 }
