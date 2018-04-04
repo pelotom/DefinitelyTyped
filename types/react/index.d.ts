@@ -911,11 +911,7 @@ declare namespace React {
         onTransitionEndCapture?: TransitionEventHandler<T>;
     }
 
-    export interface CSSProperties extends CSS.Properties<string | number> {
-        // The string index signature fallback is needed at least until csstype
-        // provides SVG CSS properties: https://github.com/frenic/csstype/issues/4
-        [propertyName: string]: any;
-    }
+    export type CSSProperties = CSS.Properties<string | number>;
 
     interface HTMLAttributes<T> extends DOMAttributes<T> {
         // React-specific Attributes
